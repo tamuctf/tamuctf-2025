@@ -1,0 +1,15 @@
+#!/bin/sh
+
+mount -t devtmpfs dev /dev
+mount -t proc none /proc
+mount -t sysfs none /sys
+
+cat <<!
+Boot took $(cut -d' ' -f1 /proc/uptime) seconds
+
+Good luck :) Flag is at /dev/sda
+!
+
+touch /etc/passwd
+/bin/busybox adduser -u 1000 -D -s /bin/sh user
+exec /bin/su - user

@@ -1,0 +1,86 @@
+# deployment vars
+NAME := proc-self-wtf-2
+
+# ============================================================
+# NOTE: the following are only necessary if hosting containers
+# This can be safely removed
+# ============================================================
+
+REGISTRY :=
+SUFFIX :=
+
+# configurable vars:
+# HPORTS="8888 8889" make -e ...
+CPORTS := 1337
+HPORTS := $(CPORTS)
+SERVICES := SHELL
+
+# generate service -> port mappings: SERVICE_PORT := PORT
+# this is necessary for docker compose string substitution via env variables
+# also useful for containers requiring build args for setting ports on multiple services
+$(foreach var, \
+    $(shell \
+				python -c "for s, p in zip('$(SERVICES)'.split(), '$(CPORTS)'.split()): print(f'{s}_CPORT:={p}')" \
+    ), $(eval $(var)) \
+)
+
+# docker
+DOCKER_CONTEXT := default
+DOCKER_GLOBAL := --context $(DOCKER_CONTEXT)
+DOCKER_RUNTIME := --privileged --read-only --memory=4096m --cpus=1 --restart=always --tmpfs /tmp
+
+
+# ============================================================
+# NOTE: if not compiling, the $(NAME) dep along with compilation
+# 	directive can be safely removed
+#	docker directives may be removed if docker is not used
+#	dist directives should be omitted if there is no distributable
+# ============================================================
+
+# build vars
+CC := $(or $(CC),gcc)
+CFLAGS := -O0 -fno-stack-protector
+
+all: $(NAME)
+
+$(NAME): $(NAME).c
+	$(CC) $(CFLAGS) $^ -o $@
+
+clean: .PHONY
+	rm -f $(NAME).tar.gz
+	make -C ../proc-self-wtf-common clean
+	rm -f bzImage disk.img initramfs.img.lz4 entrypoint.sh
+
+bzImage:
+disk.img:
+initramfs.img.lz4:
+
+build: Dockerfile bzImage disk.img initramfs.img.lz4
+	make -C ../proc-self-wtf-common
+	ln -f ../proc-self-wtf-common/bzImage bzImage
+	ln -f ../proc-self-wtf-common/disk.img disk.img
+	ln -f ../proc-self-wtf-common/initramfs.img.lz4 initramfs.img.lz4
+	ln -f ../proc-self-wtf-common/entrypoint.sh entrypoint.sh
+	docker $(DOCKER_GLOBAL) build -t $(NAME) \
+		--build-arg name=$(NAME) \
+		--build-arg shell_port=$(SHELL_CPORT) \
+		.
+
+run:
+	$(eval ports := $(shell python -c "for h, c in zip('$(HPORTS)'.split(), '$(CPORTS)'.split()): print(f' -p {h}:{c}')"))
+	docker $(DOCKER_GLOBAL) run $(DOCKER_RUNTIME) -d --name $(NAME)$(SUFFIX) $(ports) $(REGISTRY)$(NAME)
+
+# extract: build
+# 	mkdir build
+# 	$(eval id := $(shell docker create $(NAME)))
+# 	docker cp $(id):/srv/opt build/$(NAME)
+# 	docker rm -v $(id)
+
+# dist: extract
+# 	cp solver-template.py build
+# 	rm build/${NAME}/flag.txt
+# 	mv build $(NAME)
+# 	tar -czf $(NAME).tar.gz $(NAME)
+# 	rm -rf $(NAME)
+
+.PHONY:

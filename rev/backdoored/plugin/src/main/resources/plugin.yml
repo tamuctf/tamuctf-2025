@@ -1,0 +1,24 @@
+name: @name@
+version: @version@
+author: @author@
+main: @main@
+api-version: 1.21
+
+commands:
+  ping: 
+    description: "Simple ping command"
+    usage: "/<command>"
+  b64encode:
+    description: "Base64 encode some data"
+    usage: "/<command> <data>"
+  b64decode:
+    description: "Base64 decode some data"
+    usage: "/<command> <data>"
+  encrypt:
+    description: "Encrypt data with a specified key"
+    usage: "/<command> <plaintext> <key>"
+    aliases: ["enc"]
+  decrypt:
+    description: "Decrypt data with a specified key"
+    usage: "/<command> <ciphertext> <key>"
+    aliases: ["dec"]

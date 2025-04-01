@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rc-update add cronie default
+sleep 1
+docker load < /dev/sdb
+adduser -u 1000 -D -s /bin/sh user
+exec poweroff

@@ -1,0 +1,14 @@
+#cloud-config
+disable_root: false
+ssh_genkeytypes: []
+
+write_files:
+  - path: /etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=-/sbin/agetty --autologin root --noclear %I $TERM
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl restart serial-getty@ttyS0

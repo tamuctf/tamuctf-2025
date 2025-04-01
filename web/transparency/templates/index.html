@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecretShare - Private Document Sharing</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .example {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e8f4fc;
+            border-left: 4px solid #3498db;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SecretShare</h1>
+        <p>Share documents securely with private links</p>
+    </header>
+
+    <div class="container">
+        <h2>How It Works</h2>
+        <p>SecretShare provides an innovative way to share documents. Each document gets its own unique subdomain that only people with the link can access. This provides an additional security boundary compared to path-based unique links. It's like each document is a different website!</p>
+        
+        <div class="example">
+            <h3>Example:</h3>
+            <p>A standard sharing service might use: <code>transparency.cybr.club/docs/a1b2c3d4</code></p>
+            <p>Our enhanced security uses: <code>a1b2c3d4.transparency.cybr.club</code></p>
+            <p>This makes your documents completely private and undiscoverable!</p>
+        </div>
+        
+        <a href="/create" class="btn">Create New Document</a>
+        
+        <h3>Check out our example document:</h3>
+        <p>We've created an example document to show you how SecretShare works: <a href="https://g64aes8z.transparency.cybr.club">g64aes8z.transparency.cybr.club</a></p>
+    </div>
+</body>
+</html>
+

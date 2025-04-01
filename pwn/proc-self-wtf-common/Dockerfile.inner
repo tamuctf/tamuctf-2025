@@ -1,0 +1,17 @@
+FROM alpine AS build
+
+RUN apk --no-cache add alpine-sdk
+ADD sleep.c sleep.c
+RUN gcc -static sleep.c -o /sleep
+RUN mkdir /scratch
+RUN touch /flag.txt
+
+FROM scratch
+
+COPY --from=build /sleep /sleep
+COPY --from=build --chown=1000:1000 /scratch /scratch
+COPY --from=build --chown=1000:1000 /flag.txt /flag.txt
+
+# for safety
+USER 1000:1000
+ENTRYPOINT ["/sleep"]

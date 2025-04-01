@@ -1,0 +1,82 @@
+import org.apache.tools.ant.filters.*
+import org.gradle.internal.jvm.Jvm
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+java {
+   sourceCompatibility = '21'
+}
+
+dependencies {
+    compileOnly files('spigot-api-1.21.4-R0.1.jar')
+}
+
+processResources {
+    filter ReplaceTokens, tokens: [
+            "name": project.property("name"),
+            "version": project.property("version"),
+            "author": project.property("author"),
+            "main": project.property("main")
+    ]
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+// ---- JNI Compilation Setup ----
+def jvmHome = org.gradle.internal.jvm.Jvm.current().javaHome
+def os = org.gradle.internal.os.OperatingSystem.current()
+def libExt = os.isWindows() ? ".dll" : (os.isMacOsX() ? ".dylib" : ".so")
+def libName = "notsuspicious" + libExt
+def outputLib = file("build/libs/" + libName)
+def jniIncludes = ["-I${jvmHome}/include"]
+
+if (os.isWindows()) {
+    jniIncludes += "-I${jvmHome}/include/win32"
+} else if (os.isLinux()) {
+    jniIncludes += "-I${jvmHome}/include/linux"
+} else if (os.isMacOsX()) {
+    jniIncludes += "-I${jvmHome}/include/darwin"
+}
+
+tasks.register('compileJni', Exec) {
+    group = "build"
+    description = "Compiles JNI C++ sources"
+    
+    def srcDir = file("src/main/cpp")
+    def buildDir = file("build/libs")
+    
+    inputs.dir(srcDir)
+    outputs.file(outputLib)
+
+    def inputFiles = fileTree(srcDir).files
+    // only get .cpp files
+    inputFiles = inputFiles.findAll { it.name.endsWith(".cpp") }
+    inputs.files(inputFiles)
+
+    doFirst {
+        buildDir.mkdirs()
+    }
+
+    commandLine "g++", "-shared", "-s", "-fPIC", "-o", outputLib, "-I${srcDir}", *jniIncludes, *inputFiles.asList()
+}
+
+// Ensure JNI library is compiled before Java classes
+tasks.named("classes").configure {
+    dependsOn tasks.named("compileJni")
+}
+
+// Package JNI library into JAR
+tasks.named("jar").configure {
+    dependsOn tasks.named("compileJni")
+    from outputLib
+
+    // doLast {
+    //     // delete the JNI library after packaging it into the JAR
+    //     outputLib.delete()
+    // }
+}

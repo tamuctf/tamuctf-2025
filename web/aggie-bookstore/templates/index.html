@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggie Bookstore</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Aggie Bookstore</h1>
+    <form action="/search" method="GET">
+        <input type="text" name="title" placeholder="Enter book title" required>
+        <input type="text" name="author" placeholder="Enter book author" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if books %}
+        <h2>Search Results</h2>
+        <ul>
+        {% for book in books %}
+            <li>
+                <strong>{{ book.title }}</strong> by {{ book.author }} <br>
+                <em>{{ book.genre }}</em><br>
+                {{ book.description }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>

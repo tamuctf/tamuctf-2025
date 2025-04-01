@@ -1,0 +1,25 @@
+#! /bin/sh
+
+mount -t devtmpfs dev /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+ip link set up dev lo
+
+# testing, don't look too close
+# exec /bin/sh
+
+mkdir newroot
+mount /dev/sda1 newroot
+mount -t devtmpfs dev newroot/dev
+mount -t proc proc newroot/proc
+mount -t sysfs sysfs newroot/sys
+
+if [ -b /dev/sdc ]; then
+  cat /dev/sdb > newroot/etc/crontabs/root
+  mkdir -p newroot/private/flags
+  chmod 700 newroot/private/flags
+  cat /dev/sdc > newroot/private/flags/flag.txt
+fi
+
+exec switch_root newroot /sbin/init
+poweroff -f

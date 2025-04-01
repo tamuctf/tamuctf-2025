@@ -1,0 +1,14 @@
+[settings]
+# toggles discoverability at time of deployment
+deploy = true
+# true if challenge needs containers hosted
+containers = true
+# health_check = false
+
+[services.pwn]
+port = 1337
+type = "stream"
+
+[nginx]
+balance_method = "least_conn"
+instances = 5

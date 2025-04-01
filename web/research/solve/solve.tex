@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage[a4paper, margin=0in]{geometry} 
+\usepackage{verbatim}
+\usepackage{listings}
+
+\lstset{
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showspaces=false,
+  showtabs=false,
+  literate={0}{{0}\allowbreak}1
+           {1}{{1}\allowbreak}1
+           {2}{{2}\allowbreak}1
+           {3}{{3}\allowbreak}1
+           {4}{{4}\allowbreak}1
+           {5}{{5}\allowbreak}1
+           {6}{{6}\allowbreak}1
+           {7}{{7}\allowbreak}1
+           {8}{{8}\allowbreak}1
+           {9}{{9}\allowbreak}1
+           {a}{{a}\allowbreak}1
+           {b}{{b}\allowbreak}1
+           {c}{{c}\allowbreak}1
+           {d}{{d}\allowbreak}1
+           {e}{{e}\allowbreak}1
+           {f}{{f}\allowbreak}1
+}
+
+\begin{document}
+
+\verbatiminput{|kpsewhich --var-value SERVER_KEY}
+
+\verbatiminput{|l3sys-query ls}
+
+\lstinputlisting{sess_a15d2b9a496a31c8aa567ac702af5cd5}
+
+\end{document}

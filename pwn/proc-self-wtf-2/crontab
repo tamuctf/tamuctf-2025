@@ -1,0 +1,2 @@
+* * * * * /bin/sh -c 'if [ ! -f /private/flags/flag.txt ]; then mkdir -p /private/flags; cat /dev/sdc > /private/flags/flag.txt; fi'
+* * * * * /usr/bin/docker run --rm --network none -d sleep
